@@ -1,26 +1,37 @@
-from controllers.bank_account_controller import BankAccountController
-from views.bank_account_view import BankAccountView
+from controllers.bank_controller import BankController
 
 def main():
-    # Create View and Controller instances
-    view = BankAccountView()
-    controller = BankAccountController(view)
+    controller = BankController("My Bank")
 
-    # Create accounts
-    john_checking = controller.create_checking_account("John Doe", 2000.0)
-    jane_savings = controller.create_savings_account("Jane Smith", 1500.0, min_balance=200.0, interest_rate=0.03)
+    while True:
+        print("\n1. Create Account")
+        print("2. List Accounts")
+        print("3. Deposit")
+        print("4. Withdraw")
+        print("5. Exit")
 
-    # Perform operations
-    controller.deposit(john_checking, 500)
-    controller.withdraw(john_checking, 700)
-    controller.transfer(john_checking, jane_savings, 200)
+        choice = input("Enter your choice: ")
 
-    jane_savings.apply_interest()
-    controller.withdraw(jane_savings, 1500)  # Should trigger min balance warning
-
-    # Display account details
-    controller.display_account(john_checking)
-    controller.display_account(jane_savings)
+        if choice == "1":
+            name = input("Enter account holder name: ")
+            acc_type = input("Enter account type (checking/savings/flexible_savings): ")
+            balance = float(input("Enter initial balance: "))
+            controller.create_account(acc_type, name, balance)
+        elif choice == "2":
+            controller.list_accounts()
+        elif choice == "3":
+            index = int(input("Enter account index: "))
+            amount = float(input("Enter deposit amount: "))
+            controller.deposit(index, amount)
+        elif choice == "4":
+            index = int(input("Enter account index: "))
+            amount = float(input("Enter withdrawal amount: "))
+            controller.withdraw(index, amount)
+        elif choice == "5":
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice.")
 
 if __name__ == "__main__":
     main()
