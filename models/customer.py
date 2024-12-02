@@ -1,8 +1,12 @@
 class Customer:
-    def __init__(self, firstname, surname, contact):
+    def __init__(self, firstname, surname, contact=None):
         self.firstname = firstname
         self.surname = surname
         self.contact = contact
 
-    def __str__(self):
-        return f"{self.firstname} {self.surname} - {self.contact}"
+class Contact:
+    def __init__(self, phone, mobile, email, address):
+        self.phone = phone
+        self.mobile = mobile
+        self.email = email
+        self.address = address

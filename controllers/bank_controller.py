@@ -1,42 +1,28 @@
 from models.bank import Bank
-from models.checking_account import CheckingAccount
-from models.savings_account import SavingsAccount
-from models.flexible_savings_account import FlexibleSavingsAccount
-from views.bank_view import BankView
+from models.data_types import Money, InterestRate, Period
+from models.child_account_classes import CheckingAccount, SavingAccount, FlexibleSavingAccount
 
 class BankController:
-    def __init__(self, bank_name):
-        self.bank = Bank(bank_name)
-        self.view = BankView()
+    def __init__(self, bank: Bank):
+        self.bank = bank
 
-    def create_account(self, account_type, holder_name, balance=0):
+    def create_account(self, name: str, account_type: str, initial_balance: float, interest_rate: float, interest_period: str, overdraft_limit: float = 500.0, min_balance: float = 100.0):
+        balance = Money(initial_balance)
+        rate = InterestRate(interest_rate)
+        period = Period(interest_period)
+
         if account_type == "checking":
-            account = CheckingAccount(holder_name, balance)
+            overdraft = Money(overdraft_limit)
+            account = CheckingAccount(name, balance, rate, period, overdraft)
         elif account_type == "savings":
-            account = SavingsAccount(holder_name, balance)
+            min_balance = Money(min_balance)
+            account = SavingAccount(name, balance, rate, period, min_balance)
         elif account_type == "flexible_savings":
-            account = FlexibleSavingsAccount(holder_name, balance)
+            account = FlexibleSavingAccount(name, balance, rate, period)
         else:
             raise ValueError("Invalid account type.")
-        self.bank.create_account(account)
-        self.view.display_message(f"Account created for {holder_name}.")
+
+        self.bank.add_account(account)
 
     def list_accounts(self):
-        accounts = self.bank.list_accounts()
-        self.view.display_accounts(accounts)
-
-    def deposit(self, account_index, amount):
-        try:
-            account = self.bank.accounts[account_index]
-            account.deposit(amount)
-            self.view.display_message(f"Deposited ${amount} to {account.account_holder}'s account.")
-        except Exception as e:
-            self.view.display_message(str(e))
-
-    def withdraw(self, account_index, amount):
-        try:
-            account = self.bank.accounts[account_index]
-            account.withdraw(amount)
-            self.view.display_message(f"Withdrew ${amount} from {account.account_holder}'s account.")
-        except Exception as e:
-            self.view.display_message(str(e))
+        return self.bank.list_accounts()
